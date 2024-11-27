@@ -1,21 +1,13 @@
 const express = require('express');
 const cors = require('cors');
-
-// Crear la aplicación Express
 const app = express();
-
-// Configurar CORS para permitir solicitudes desde cualquier origen
 app.use(cors());
-
-// Middleware para analizar JSON
 app.use(express.json());
 
-// Variables para almacenar el contador y los estados de los LEDs
 let contador = 0;
 let estadoLed = "Apagado";
 let estadoLedB = "Encendido";
 
-// Ruta GET para devolver los datos actuales
 app.get('/datos', (req, res) => {
   res.json({
     contador: contador,
@@ -24,7 +16,6 @@ app.get('/datos', (req, res) => {
   });
 });
 
-// Ruta POST para actualizar los datos
 app.post('/actualizar', (req, res) => {
   const { contadorNuevo, estadoLedNuevo, estadoLedBNuevo } = req.body;
 
@@ -40,7 +31,6 @@ app.post('/actualizar', (req, res) => {
   });
 });
 
-// Iniciar el servidor en el puerto 80
 const port = 80;
 app.listen(port, () => {
   console.log(`API corriendo en http://localhost:${port}`);
