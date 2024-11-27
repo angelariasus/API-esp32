@@ -1,7 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
+
+app.use(cors());
 
 app.use(bodyParser.json());
 
@@ -9,14 +12,22 @@ let contador = 0;
 let estadoLed = "Apagado";
 
 app.post('/datos', (req, res) => {
-  const { contadorRecibido, estadoLedRecibido } = req.body;
+  const { contadorNuevo, estadoLedNuevo } = req.body;
 
-  if (contadorRecibido !== undefined) contador = contadorRecibido;
-  if (estadoLedRecibido !== undefined) estadoLed = estadoLedRecibido;
+  if (contadorNuevo !== undefined && estadoLedNuevo !== undefined) {
+    contador = contadorNuevo;
+    estadoLed = estadoLedNuevo;
 
-  console.log('Datos recibidos:', { contador, estadoLed });
-
-  res.status(200).json({ message: 'Datos recibidos correctamente' });
+    res.status(200).json({
+      message: "Datos actualizados correctamente",
+      contador: contador,
+      estadoLed: estadoLed
+    });
+  } else {
+    res.status(400).json({
+      error: "Faltan datos en la solicitud"
+    });
+  }
 });
 
 app.get('/datos', (req, res) => {
@@ -26,6 +37,10 @@ app.get('/datos', (req, res) => {
   });
 });
 
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
+
   console.log('Servidor API escuchando en el puerto 3000');
 });
