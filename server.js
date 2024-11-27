@@ -1,31 +1,47 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const cors = require('cors');
 
+// Crear la aplicación Express
 const app = express();
 
-app.use(bodyParser.json());
+// Configurar CORS para permitir solicitudes desde cualquier origen
+app.use(cors());
 
+// Middleware para analizar JSON
+app.use(express.json());
+
+// Variables para almacenar el contador y los estados de los LEDs
 let contador = 0;
 let estadoLed = "Apagado";
+let estadoLedB = "Encendido";
 
-app.post('/datos', (req, res) => {
-  const { contadorRecibido, estadoLedRecibido } = req.body;
-
-  if (contadorRecibido !== undefined) contador = contadorRecibido;
-  if (estadoLedRecibido !== undefined) estadoLed = estadoLedRecibido;
-
-  console.log('Datos recibidos:', { contador, estadoLed });
-
-  res.status(200).json({ message: 'Datos recibidos correctamente' });
-});
-
+// Ruta GET para devolver los datos actuales
 app.get('/datos', (req, res) => {
-  res.status(200).json({
+  res.json({
     contador: contador,
-    estadoLed: estadoLed
+    estadoLed: estadoLed,
+    estadoLedB: estadoLedB
   });
 });
 
-app.listen(3000, () => {
-  console.log('Servidor API escuchando en el puerto 3000');
+// Ruta POST para actualizar los datos
+app.post('/actualizar', (req, res) => {
+  const { contadorNuevo, estadoLedNuevo, estadoLedBNuevo } = req.body;
+
+  if (contadorNuevo !== undefined) contador = contadorNuevo;
+  if (estadoLedNuevo !== undefined) estadoLed = estadoLedNuevo;
+  if (estadoLedBNuevo !== undefined) estadoLedB = estadoLedBNuevo;
+
+  res.status(200).json({
+    mensaje: "Datos actualizados correctamente",
+    contador: contador,
+    estadoLed: estadoLed,
+    estadoLedB: estadoLedB
+  });
+});
+
+// Iniciar el servidor en el puerto 80
+const port = 80;
+app.listen(port, () => {
+  console.log(`API corriendo en http://localhost:${port}`);
 });
